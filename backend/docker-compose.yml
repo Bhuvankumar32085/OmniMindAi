@@ -1,0 +1,101 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: omnimind-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: omnimind-gateway
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=${PORT:-8000}
+      - NODE_ENV=${NODE_ENV:-production}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
+      - AUTH_SERVICE=http://auth-service:8001
+      - CHAT_SERVICE=http://chat-service:8002
+      - AGENT_SERVICE=http://agent-service:8003
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      chat-service:
+        condition: service_started
+      agent-service:
+        condition: service_started
+
+  auth-service:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
+    container_name: omnimind-auth-service
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - NODE_ENV=${NODE_ENV:-production}
+      - MONGO_URL=${MONGO_URL:-mongodb+srv://bhuvankumar66666_db_user:bhuvan32085@ominimindai.96pzbt4.mongodb.net/?appName=OMiniMindAI}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
+      - REDIS_URL=redis://redis:6379
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-rzp_test_RIcvaGeQNxmtd6}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET:-GP7h27EFtN5A8L1Kznt7MIZj}
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  chat-service:
+    build:
+      context: ./services/chat
+      dockerfile: Dockerfile
+    container_name: omnimind-chat-service
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - MONGO_URL=${MONGO_URL:-mongodb+srv://bhuvankumar66666_db_user:bhuvan32085@ominimindai.96pzbt4.mongodb.net/?appName=OMiniMindAI}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  agent-service:
+    build:
+      context: ./services/agent
+      dockerfile: Dockerfile
+    container_name: omnimind-agent-service
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - MONGO_URL=${MONGO_URL:-mongodb+srv://bhuvankumar66666_db_user:bhuvan32085@ominimindai.96pzbt4.mongodb.net/?appName=OMiniMindAI}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyBAOGFkcDfX5EmHVx2LDBqb48T3uadifR8}
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-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}
+      - MAX_REVIEW_ATTEMPTS=${MAX_REVIEW_ATTEMPTS:-3}
+      - CHAT_SERVICE=http://chat-service:8002
+    depends_on:
+      chat-service:
+        condition: service_started
+
+volumes:
+  redis_data:
