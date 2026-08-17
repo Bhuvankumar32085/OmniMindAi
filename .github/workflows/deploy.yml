@@ -37,11 +37,11 @@ jobs:
       
       - name: tag Gateway
         run: |
-            docker tag omnimind-gateway:latest ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-gateway:latest
+            docker tag omnimind-gateway:latest ${{ steps.login-ecr.outputs.registry }}/omnimind-gateway:latest
 
       - name: push Gateway
         run: |
-          docker push ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-gateway:latest 
+          docker push ${{ steps.login-ecr.outputs.registry }}/omnimind-gateway:latest 
       
       - name: build auth service
         run : |
@@ -51,11 +51,11 @@ jobs:
 
       - name: tag auth service
         run: |
-            docker tag omnimind-auth:latest ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-auth:latest
+            docker tag omnimind-auth:latest ${{ steps.login-ecr.outputs.registry }}/omnimind-auth:latest
 
       - name: push auth service
         run: |
-          docker push ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-auth:latest 
+          docker push ${{ steps.login-ecr.outputs.registry }}/omnimind-auth:latest 
 
       - name: build chat service
         run : |
@@ -65,11 +65,11 @@ jobs:
 
       - name: tag chat service
         run: |
-            docker tag omnimind-chat:latest ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-chat:latest
+            docker tag omnimind-chat:latest ${{ steps.login-ecr.outputs.registry }}/omnimind-chat:latest
 
       - name: push chat service
         run: |
-          docker push ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-chat:latest 
+          docker push ${{ steps.login-ecr.outputs.registry }}/omnimind-chat:latest 
 
       - name: build agent service
         run : |
@@ -79,11 +79,11 @@ jobs:
 
       - name: tag agent service
         run: |
-            docker tag omnimind-agent:latest ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-agent:latest
+            docker tag omnimind-agent:latest ${{ steps.login-ecr.outputs.registry }}/omnimind-agent:latest
 
       - name: push agent service
         run: |
-          docker push ${{ env.AWS_ACCOUNT_ID }}.ecr.${{ env.AWS_REGION }}.amazonaws.com/omnimind-agent:latest 
+          docker push ${{ steps.login-ecr.outputs.registry }}/omnimind-agent:latest 
       
       - name: deploy gateway
         run: |
