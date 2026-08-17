@@ -554,10 +554,10 @@ def call_agent():
 
 
 if __name__ == "__main__":
-    graph.get_graph().draw_mermaid_png(
-        output_file_path="workflow.png",
-        draw_method=MermaidDrawMethod.API,
-    )
+    # graph.get_graph().draw_mermaid_png(
+    #     output_file_path="workflow.png",
+    #     draw_method=MermaidDrawMethod.API,
+    # )
     app.run(
         host="0.0.0.0",
         port=PORT,
