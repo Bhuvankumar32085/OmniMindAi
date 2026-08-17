@@ -206,11 +206,18 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
     try {
       const serverUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:8000";
+      const sessionId = localStorage.getItem("session_id");
 
       const response = await fetch(`${serverUrl}/agent/call-agent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(sessionId
+            ? {
+                Authorization: `Bearer ${sessionId}`,
+                "x-session-id": sessionId,
+              }
+            : {}),
         },
         credentials: "include",
         body: JSON.stringify({

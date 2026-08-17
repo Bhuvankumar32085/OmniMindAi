@@ -19,7 +19,18 @@ export const isAuth = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const sessionID = req.cookies.session;
+    const authHeader = req.headers.authorization;
+    const bearerToken =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.slice(7).trim()
+        : null;
+
+    const sessionID =
+      bearerToken ||
+      (req.headers["x-session-id"] as string) ||
+      (req.headers["x-user-session"] as string) ||
+      req.cookies?.session;
+
     if (!sessionID) {
       res.status(401).json({
         success: false,

@@ -96,13 +96,27 @@ export const login = tryCatch(async (req, res) => {
     7 * 24 * 60 * 60,
   );
 
-  return sendSuccess(res, message, user);
+  const userData = typeof user.toObject === "function" ? user.toObject() : user;
+  return sendSuccess(res, message, {
+    ...userData,
+    sessionId,
+  });
 });
 
 export const logout = tryCatch(async (req, res) => {
-  const sessionId = req.cookies?.session;
+  const authHeader = req.headers.authorization;
+  const bearerToken =
+    authHeader && authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7).trim()
+      : null;
+
+  const sessionId =
+    bearerToken ||
+    (req.headers["x-session-id"] as string) ||
+    req.cookies?.session;
+
   if (!sessionId) {
-    return sendError(res, "SessionId Not Found In Your cookies", null, 404);
+    return sendError(res, "SessionId Not Found In Your cookies or headers", null, 404);
   }
 
   await redis.del(`session-${sessionId}`);

@@ -65,6 +65,9 @@ const Home = () => {
       const token = await googleRes.user.getIdToken();
       const { data } = await gatwayApi.post("/auth/login-signup", { token });
       if (data.success) {
+        if (data.data?.sessionId) {
+          localStorage.setItem("session_id", data.data.sessionId);
+        }
         setIsLogin(true);
         dispatch(login(data.data));
         dispatch(fetchCreditBalance());
@@ -82,6 +85,7 @@ const Home = () => {
     try {
       const { data } = await gatwayApi.get("/auth/logout");
       if (data.success) {
+        localStorage.removeItem("session_id");
         setIsLogin(false);
         dispatch(logout());
       }
