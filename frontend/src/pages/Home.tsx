@@ -27,6 +27,8 @@ const Home = () => {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const dispatch = useAppDispatch();
 
+  console.log("isAuthenticated => ", isAuthenticated)
+
   const [stars, setStars] = useState<
     {
       id: number;
