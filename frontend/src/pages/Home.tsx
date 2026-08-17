@@ -12,6 +12,7 @@ import PlansModal from "../components/PlansModal";
 import AdminDashboard from "../components/AdminDashboard";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { login, logout } from "../features/auth/authSlice";
+import { fetchCreditBalance } from "../features/credit/creditSlice";
 import { useConversations } from "../hooks/useConversations";
 
 const Home = () => {
@@ -27,7 +28,9 @@ const Home = () => {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const dispatch = useAppDispatch();
 
-  console.log("isAuthenticated => ", isAuthenticated)
+  useEffect(() => {
+    setIsLogin(isAuthenticated);
+  }, [isAuthenticated]);
 
   const [stars, setStars] = useState<
     {
@@ -64,6 +67,7 @@ const Home = () => {
       if (data.success) {
         setIsLogin(true);
         dispatch(login(data.data));
+        dispatch(fetchCreditBalance());
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -12,12 +12,19 @@ import { gatwayApi } from "../utils/axios";
 export const useConversations = () => {
   const dispatch = useAppDispatch();
   const { selectedConversation } = useAppSelector((state) => state.conversation);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
 
-  // 1. Fetch conversations list initially
+  // 1. Fetch conversations list when authenticated
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     const fetchConversations = async () => {
       try {
+        setLoading(true);
         const { data } = await gatwayApi.get("/chat/conversation");
         if (data.success) {
           dispatch(setConversations(data.data));
@@ -37,7 +44,7 @@ export const useConversations = () => {
     };
 
     fetchConversations();
-  }, [dispatch]);
+  }, [isAuthenticated, dispatch]);
 
   // 2. Fetch messages whenever selectedConversation changes!
   useEffect(() => {

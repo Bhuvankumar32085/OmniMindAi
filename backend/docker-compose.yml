@@ -51,13 +51,13 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - PORT=8001
+      - PORT=${PORT:-8001}
       - NODE_ENV=${NODE_ENV:-production}
-      - MONGO_URL=${MONGO_URL:-mongodb+srv://bhuvankumar66666_db_user:bhuvan32085@ominimindai.96pzbt4.mongodb.net/?appName=OMiniMindAI}
+      - MONGO_URL=${MONGO_URL}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
-      - REDIS_URL=redis://redis:6379
-      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-rzp_test_RIcvaGeQNxmtd6}
-      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET:-GP7h27EFtN5A8L1Kznt7MIZj}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
     depends_on:
       redis:
         condition: service_healthy
@@ -71,9 +71,9 @@ services:
     ports:
       - "8002:8002"
     environment:
-      - PORT=8002
-      - MONGO_URL=${MONGO_URL:-mongodb+srv://bhuvankumar66666_db_user:bhuvan32085@ominimindai.96pzbt4.mongodb.net/?appName=OMiniMindAI}
-      - REDIS_URL=redis://redis:6379
+      - PORT=${PORT:-8002}
+      - MONGO_URL=${MONGO_URL}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
     depends_on:
       redis:
         condition: service_healthy
@@ -87,10 +87,10 @@ services:
     ports:
       - "8003:8003"
     environment:
-      - PORT=8003
-      - MONGO_URL=${MONGO_URL:-mongodb+srv://bhuvankumar66666_db_user:bhuvan32085@ominimindai.96pzbt4.mongodb.net/?appName=OMiniMindAI}
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyBAOGFkcDfX5EmHVx2LDBqb48T3uadifR8}
-      - TAVILY_API_KEY=${TAVILY_API_KEY:-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}
+      - PORT=${PORT:-8003}
+      - MONGO_URL=${MONGO_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
       - MAX_REVIEW_ATTEMPTS=${MAX_REVIEW_ATTEMPTS:-3}
       - CHAT_SERVICE=http://chat-service:8002
     depends_on:

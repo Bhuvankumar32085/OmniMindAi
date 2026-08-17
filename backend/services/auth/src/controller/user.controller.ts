@@ -79,7 +79,7 @@ export const login = tryCatch(async (req, res) => {
   res.cookie("session", sessionId, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "none" : "strict",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -107,7 +107,11 @@ export const logout = tryCatch(async (req, res) => {
 
   await redis.del(`session-${sessionId}`);
 
-  res.clearCookie("session");
+  res.clearCookie("session", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+  });
 
   return sendSuccess(res, " Logout Successfully");
 });
